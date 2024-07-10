@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -11,8 +10,17 @@ public class PlayerController : MonoBehaviour
     [Header("Config Player")]
     public float movementSpeed = 3f;
  
+    [Header("Attack Config")]
+    public int amountDmg;
+    public Transform hitBox;
+    [Range(0.2f, 1)]
+    public float hitRange = 0.2f;
+    public LayerMask hitMask;
+    public Collider[] hitInfo;
+
     private Vector3 direction;
     private bool isWalk;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -23,12 +31,11 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        Attack();
     }
 
     void FixedUpdate() 
     {
-        Attack();
         Move();
     }
 
@@ -56,6 +63,23 @@ public class PlayerController : MonoBehaviour
 
     void Attack()
     {
-        if(Input.GetButtonDown("Fire1")){anim.SetTrigger("Attack");}
+        if(Input.GetButtonDown("Fire1"))
+        {
+            anim.SetTrigger("Attack");
+            hitInfo = Physics.OverlapSphere(hitBox.position, hitRange, hitMask);
+
+            foreach(Collider c in hitInfo)
+            {
+                c.gameObject.SendMessage("GetHit", amountDmg, SendMessageOptions.DontRequireReceiver);
+            }
+        }
+    }
+
+    private void OnDrawGizmosSelected() 
+    {
+        if(hitBox != null)
+        {
+            Gizmos.DrawWireSphere(hitBox.position, hitRange);
+        }
     }
 }
