@@ -9,7 +9,13 @@ public enum enemyState
 
 public class GameManager : MonoBehaviour
 {
+    public Transform player;
+
     [Header("Slime IA")]
+    public float slimeIdleWaitTime = 3f;
+    public float slimeDistanceToAttack;
+    public float slimeAlertTime = 3f;
+    public float slimeAttackDelay = 3f;
     public Transform[] slimeWayPoints;
     
     // Start is called before the first frame update
